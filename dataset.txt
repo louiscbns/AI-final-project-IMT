@@ -1,0 +1,10 @@
+Column	Definition
+image	a 640x640 top-down image from a realistic food plate in the Google cafeteria
+id	identifier of the sample
+split	the split of the sample, only test for now
+ingredients	a list of the different ingredients, with the mass (grams), calories, fat, carb, protein and name.
+total_mass	total calories of the plate
+total_calories	the total mass of the food on the plate
+total_fat	the total fat on the plate
+total_carb	total carbohydrates on the plate
+total_protein	total protein on the plate

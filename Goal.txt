@@ -1,0 +1,21 @@
+Analyse de la Composition Nutritionnelle de nos plats
+
+Dataset de Huggingface : https://huggingface.co/datasets/mmathys/food-nutrients (mmathys/food-nutrients)
+This data was taken from Google Research's dataset Nutrition5k. It's cleaned up and filtered, because this dataset had many issues such as missing images or missing calorie information for certain samples. That's why this dataset is a bit smaller than 5k samples.
+
+
+Tâches à résoudre :
+1. Prédiction de la valeur nutritionnelle d'un aliment / d'un plat basée sur ses ingrédients (problème de régression)
+2. Classification des aliments selon leur profil nutritionnel et détection des aliments riches en nutriments spécifiques (problème de clustering/classification)
+
+
+
+Pour la Tâche 1 (Prédiction) :
+- Utiliser un modèle de type Transformer pour traiter les ingrédients comme séquence
+- Implémenter une architecture de type "Encoder" pour transformer les ingrédients en embeddings
+- Ajouter des couches de régression pour prédire les valeurs nutritionnelles
+
+Pour la Tâche 2 (Classification) :
+- Utiliser des techniques de réduction de dimensionnalité (t-SNE/UMAP) pour visualiser les profils nutritionnels
+- Implémenter un clustering hiérarchique pour identifier des groupes d'aliments similaires
+- Créer des visualisations interactives des résultats
