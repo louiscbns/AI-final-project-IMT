@@ -30,9 +30,22 @@ Ce jeu de données est une version nettoyée et filtrée du dataset Nutrition5k 
 ## Méthodologie
 
 ### Prétraitement des Données
-- Split train/test stratifié pour garantir une distribution similaire des valeurs nutritionnelles
-- Analyse exploratoire des distributions (moyenne, écart-type) pour les différentes valeurs nutritionnelles
-- Génération d'embeddings pour les ingrédients (texte) et les images (image)
+    OK : Split train/test stratifié pour garantir une distribution similaire des valeurs nutritionnelles
+    OK : Analyse exploratoire des distributions pour les différentes valeurs nutritionnelles (calories, fat, carb, protein). 
+    OK : Test de normalité, Sous forme de gaussienne, une gaussienne du train et du test.
+    OK : Identification et suppression des valeurs aberrantes (outliers)
+    OK : Analyse des corrélations entre les différentes variables nutritionnelles (matrice de corrélation)
+    OK : Moyenne, écart-type, Coefficient de variation (CV), Écart interquartile (IQR), 1er quartile, 3ème quartile sous forme de boxplot.
+    (Ratio protéines/lipides/glucides par rapport à la masse)
+
+- Génération d'embeddings pour les ingrédients (texte) 
+- Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir du texte
+
+- Génération d'embeddings pour les images (image)
+- Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir de l'image
+
+- Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir du texte et de l'image combiné (multimodal)
+
 
 ### Modèles Implémentés
 
