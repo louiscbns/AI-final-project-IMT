@@ -51,6 +51,11 @@ Ce jeu de données est une version nettoyée et filtrée du dataset Nutrition5k 
 
 #### Pour la Tâche de Régression
 - **Approche Texte**: Transformer encodant les listes d'ingrédients
+baseline simple, on utilise le meme split train/test et compare les resultats
+
+embeddings, calculer les distances entre ces embeddings ? distance cosinus.
+
+
 - **Approche Image**: Utilisation d'OpenCLIP ou d'architectures CNN pour extraire des features des images
 - **Approche Multimodale**: Combinaison des embeddings texte et image
 
