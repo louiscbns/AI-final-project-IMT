@@ -1,21 +1,95 @@
-Analyse de la Composition Nutritionnelle de nos plats
+# README: Analyse de la Composition Nutritionnelle des Plats
 
-Dataset de Huggingface : https://huggingface.co/datasets/mmathys/food-nutrients (mmathys/food-nutrients)
-This data was taken from Google Research's dataset Nutrition5k. It's cleaned up and filtered, because this dataset had many issues such as missing images or missing calorie information for certain samples. That's why this dataset is a bit smaller than 5k samples.
+## Présentation du Projet
+
+Ce projet vise à analyser et prédire la composition nutritionnelle des plats à partir de leurs ingrédients et/ou de leurs images. En utilisant des techniques d'apprentissage automatique et de traitement du langage naturel, nous développons des modèles capables de prédire les valeurs nutritionnelles et de classifier les aliments selon leurs profils nutritionnels.
+
+## Dataset
+
+Nous utilisons le dataset `mmathys/food-nutrients` disponible sur Huggingface: https://huggingface.co/datasets/mmathys/food-nutrients
+
+Ce jeu de données est une version nettoyée et filtrée du dataset Nutrition5k de Google Research. Il contient des informations sur les plats, leurs ingrédients et leurs valeurs nutritionnelles (calories, protéines, lipides, glucides, etc.).
 
 
-Tâches à résoudre :
-1. Prédiction de la valeur nutritionnelle d'un aliment / d'un plat basée sur ses ingrédients (problème de régression)
-2. Classification des aliments selon leur profil nutritionnel et détection des aliments riches en nutriments spécifiques (problème de clustering/classification)
+
+## Objectifs du Projet
+
+### 1. Prédiction de Valeurs Nutritionnelles (Régression)
+- Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir:
+  - De ses ingrédients (approche texte)
+  - De son image (approche vision)
+  - Des deux sources combinées (approche multimodale)
+
+### 2. Classification et Clustering des Aliments
+- Identifier des clusters naturels dans les profils nutritionnels
+- Classifier les aliments selon leurs caractéristiques nutritionnelles
+- Générer des descriptions nutritionnelles pertinentes des plats
 
 
 
-Pour la Tâche 1 (Prédiction) :
-- Utiliser un modèle de type Transformer pour traiter les ingrédients comme séquence
-- Implémenter une architecture de type "Encoder" pour transformer les ingrédients en embeddings
-- Ajouter des couches de régression pour prédire les valeurs nutritionnelles
+## Méthodologie
 
-Pour la Tâche 2 (Classification) :
-- Utiliser des techniques de réduction de dimensionnalité (t-SNE/UMAP) pour visualiser les profils nutritionnels
-- Implémenter un clustering hiérarchique pour identifier des groupes d'aliments similaires
-- Créer des visualisations interactives des résultats
+### Prétraitement des Données
+- Split train/test stratifié pour garantir une distribution similaire des valeurs nutritionnelles
+- Analyse exploratoire des distributions (moyenne, écart-type) pour les différentes valeurs nutritionnelles
+- Génération d'embeddings pour les ingrédients (texte) et les images (image)
+
+### Modèles Implémentés
+
+#### Pour la Tâche de Régression
+- **Approche Texte**: Transformer encodant les listes d'ingrédients
+- **Approche Image**: Utilisation d'OpenCLIP ou d'architectures CNN pour extraire des features des images
+- **Approche Multimodale**: Combinaison des embeddings texte et image
+
+#### Pour la Tâche de Clustering/Classification
+- Techniques de réduction de dimensionnalité (t-SNE, UMAP)
+- Clustering hiérarchique pour identifier des groupes d'aliments similaires
+- Génération de descriptions textuelles à partir des profils nutritionnels
+
+## Visualisations
+- Distribution des valeurs nutritionnelles dans le dataset
+- Visualisation des clusters de plats similaires
+- Représentation des profils nutritionnels en pourcentage de la composition totale (protéines, lipides, glucides)
+
+## Applications Potentielles
+- Estimation automatique des calories et des nutriments dans une assiette
+- Recommandation nutritionnelle personnalisée
+- Aide à la composition de menus équilibrés
+
+## Organisation du Code
+- `data_preprocessing/`: Scripts de préparation et d'analyse exploratoire des données
+- `embedding_generation/`: Création des embeddings texte et image
+- `models/`: Implémentation des modèles de régression et classification
+- `visualization/`: Scripts de visualisation des résultats
+- `notebooks/`: Jupyter notebooks pour l'exploration et la démonstration
+
+
+
+
+## Comment Démarrer
+
+```bash
+# Installation des dépendances
+pip install -r requirements.txt
+
+# Téléchargement du dataset
+python download_dataset.py
+
+# Génération des embeddings (peut prendre 20min-1h)
+python generate_embeddings.py --mode text  # Pour les embeddings texte
+python generate_embeddings.py --mode image  # Pour les embeddings image
+
+# Entraînement du modèle de régression
+python train_regression.py --feature_type text  # Ou 'image' ou 'multimodal'
+
+# Clustering et visualisation
+python cluster_analysis.py
+```
+
+## Résultats Attendus
+- Prédiction précise des calories et autres valeurs nutritionnelles
+- Identification de clusters pertinents de profils alimentaires
+- Visualisations interactives des relations entre ingrédients et nutrition
+
+## Équipe et Contribution
+[Ajoutez ici les informations sur les contributeurs]
