@@ -111,3 +111,21 @@ python cluster_analysis.py
 
 ## Équipe et Contribution
 [Ajoutez ici les informations sur les contributeurs]
+
+
+
+
+
+Lab session 3 puis 2
+Données tabulaires. Reproduire une baseline (1ère solution naïve, solution simple, basée sur des datasets en ligne, à battre)
+- Selection par critere de variance, normalisation des features
+- Random Forest regression scikit learn
+
+- Embedding du texte
+
+- Utiliser un modèle pour transformer en vraie phrase - pour avoir des embeddings de clip moins pourris. Apprendre, comment decrire une assiette a partir d'un fichier de base. Analyse stat pour reformuler.
+
+
+
+Intégrer l'image : générer un embedding de l'image, computer vision
+Prediction

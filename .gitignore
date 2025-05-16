@@ -22,3 +22,6 @@ build/
 # Fichiers système
 .DS_Store
 Thumbs.db 
+
+# Fichiers de configuration sensibles
+.env 

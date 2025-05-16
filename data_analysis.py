@@ -3,90 +3,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-import json
-
-# Charger le dataset depuis les fichiers locaux
-def charger_dataset():
-    # Charger les métadonnées
-    with open('food-nutrients/metadata.jsonl', 'r') as f:
-        metadata = [json.loads(line) for line in f]
-    df = pd.DataFrame(metadata)
-    return df
-
-# Fonction pour l'analyse statistique descriptive
-def analyse_statistique(df, colonnes):
-    stats_df = pd.DataFrame()
-    for col in colonnes:
-        stats = {
-            'Moyenne': df[col].mean(),
-            'Écart-type': df[col].std(),
-            'CV': df[col].std() / df[col].mean(),
-            'Q1': df[col].quantile(0.25),
-            'Q3': df[col].quantile(0.75),
-            'IQR': df[col].quantile(0.75) - df[col].quantile(0.25),
-            'Skewness': df[col].skew(),
-            'Kurtosis': df[col].kurtosis()
-        }
-        stats_df[col] = pd.Series(stats)
-    return stats_df
-
-# Fonction pour le test de normalité
-def test_normalite(df, colonnes):
-    results = {}
-    for col in colonnes:
-        stat, p_value = stats.shapiro(df[col])
-        results[col] = {'statistique': stat, 'p_value': p_value}
-    return pd.DataFrame(results)
-
-# Fonction pour identifier les outliers (IQR)
-def identifier_outliers_mask(df, colonnes):
-    mask = pd.Series([False]*len(df))
-    for col in colonnes:
-        Q1 = df[col].quantile(0.25)
-        Q3 = df[col].quantile(0.75)
-        IQR = Q3 - Q1
-        lower_bound = Q1 - 1.5 * IQR
-        upper_bound = Q3 + 1.5 * IQR
-        mask = mask | (df[col] < lower_bound) | (df[col] > upper_bound)
-    return mask
-
-# Fonction pour comparer les distributions train/test
-def comparer_distributions(train, test, colonnes):
-    results = {}
-    for col in colonnes:
-        ks_stat, ks_pval = stats.ks_2samp(train[col], test[col])
-        mean_diff = abs(train[col].mean() - test[col].mean()) / train[col].mean() * 100
-        std_diff = abs(train[col].std() - test[col].std()) / train[col].std() * 100
-        results[col] = {
-            'KS_stat': ks_stat,
-            'KS_pval': ks_pval,
-            'Diff_moyenne_%': mean_diff,
-            'Diff_ecart_type_%': std_diff
-        }
-    return pd.DataFrame(results)
+from split_train_test import load_and_prepare_data, split_data, save_splits
 
 # Colonnes nutritionnelles à analyser
 colonnes_nutrition = ['total_calories', 'total_fat', 'total_carb', 'total_protein']
 
-# Charger et nettoyer le dataset
-df = charger_dataset()
+# Charger et préparer le dataset
+df = load_and_prepare_data('food-nutrients/metadata.jsonl')
 
-# Calculer les ratios nutritionnels (avant nettoyage pour éviter division par zéro)
-df['ratio_proteines'] = df['total_protein'] / (df['total_protein'] + df['total_fat'] + df['total_carb'])
-df['ratio_lipides'] = df['total_fat'] / (df['total_protein'] + df['total_fat'] + df['total_carb'])
-df['ratio_glucides'] = df['total_carb'] / (df['total_protein'] + df['total_fat'] + df['total_carb'])
+# Diviser les données
+X_train, X_test, y_train, y_test, df_clean = split_data(df)
 
-# Identification et suppression des outliers sur tout le dataset
-outliers_mask = identifier_outliers_mask(df, colonnes_nutrition)
-df_clean = df[~outliers_mask].reset_index(drop=True)
-print(f"Suppression de {outliers_mask.sum()} outliers. Taille du dataset nettoyé : {len(df_clean)}")
-
-# Split train/test stratifié (80/20) sur le dataset nettoyé
-X = df_clean[colonnes_nutrition]
-y = df_clean['total_calories']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=pd.qcut(y, q=5))
+# Sauvegarder les ensembles
+save_splits(X_train, X_test, y_train, y_test)
 
 # Créer une figure pour toutes les visualisations
 plt.figure(figsize=(20, 15))
@@ -163,29 +92,29 @@ plt.show()
 
 # Afficher les résultats statistiques détaillés dans la console
 print("\n=== STATISTIQUES DESCRIPTIVES ===")
-stats_desc = analyse_statistique(df_clean, colonnes_nutrition)
-print(stats_desc)
+print(df_clean[colonnes_nutrition].describe())
 
 print("\n=== TESTS DE NORMALITÉ (Shapiro-Wilk) ===")
-normalite = test_normalite(df_clean, colonnes_nutrition)
-print(normalite)
-
-print("\n=== NOMBRE D'OUTLIERS PAR VARIABLE (après nettoyage) ===")
-outliers = identifier_outliers_mask(df_clean, colonnes_nutrition)
-print(outliers.value_counts())
+for col in colonnes_nutrition:
+    stat, p_value = stats.shapiro(df_clean[col])
+    print(f"\n{col}:")
+    print(f"Statistique: {stat:.3f}")
+    print(f"p-value: {p_value:.3f}")
 
 print("\n=== TAILLE DES ENSEMBLES TRAIN/TEST ===")
 print(f"Train: {len(X_train)} échantillons ({len(X_train)/len(df_clean)*100:.1f}%)")
 print(f"Test: {len(X_test)} échantillons ({len(X_test)/len(df_clean)*100:.1f}%)")
 
 print("\n=== COMPARAISON DES DISTRIBUTIONS TRAIN/TEST ===")
-comparaison = comparer_distributions(X_train, X_test, colonnes_nutrition)
 print("\nTest de Kolmogorov-Smirnov et écarts relatifs :")
-print(comparaison)
-print("\nInterprétation :")
-print("- KS_pval > 0.05 indique que les distributions sont similaires")
-print("- Diff_moyenne_% et Diff_ecart_type_% montrent l'écart relatif en pourcentage")
+for col in colonnes_nutrition:
+    ks_stat, ks_pval = stats.ks_2samp(X_train[col], X_test[col])
+    mean_diff = abs(X_train[col].mean() - X_test[col].mean()) / X_train[col].mean() * 100
+    std_diff = abs(X_train[col].std() - X_test[col].std()) / X_train[col].std() * 100
+    print(f"\n{col}:")
+    print(f"KS p-value: {ks_pval:.3f}")
+    print(f"Différence moyenne: {mean_diff:.1f}%")
+    print(f"Différence écart-type: {std_diff:.1f}%")
 
 print("\n=== STATISTIQUES DES RATIOS NUTRITIONNELS ===")
-ratios_stats = analyse_statistique(df_clean, ['ratio_proteines', 'ratio_lipides', 'ratio_glucides'])
-print(ratios_stats) 
+print(df_clean[['ratio_proteines', 'ratio_lipides', 'ratio_glucides']].describe()) 

@@ -1,0 +1,41 @@
+# Améliorations du Prompt pour la Génération de Descriptions Nutritionnelles
+
+## Problème Initial
+Le prompt initial générait des descriptions trop longues et détaillées, comme :
+```
+"Ce plat de mixed greens est très léger, avec seulement 6.4 kcal, ce qui est bien en dessous des 500-800 kcal recommandées pour un repas équilibré. Les protéines (0.5g) et les lipides (0.1g) sont également très faibles. Pour améliorer l'équilibre, ajoutez une source de protéines comme du poulet grillé ou des pois chiches, et des lipides sains comme de l'avocat ou des graines de chia. Les glucides (1.2g) sont aussi insuffisants; ajoutez des légumes variés ou des grains entiers. Ce plat est déjà riche en nutriments et faible en calories, idéal pour une base de salade saine."
+```
+
+## Objectif
+Obtenir des descriptions plus concises et directes, comme :
+```
+"Ce plat de mixed greens est très léger, avec seulement 6.4 kcal. Les protéines (0.5g) et les lipides (0.1g) sont également très faibles. Pour améliorer l'équilibre, ajoutez une source de protéines et des lipides sains. Les glucides (1.2g) sont aussi insuffisants."
+```
+
+## Améliorations Apportées
+
+### 1. Réduction de la Longueur
+- Limite de tokens réduite de 77 à 50
+- Forçage de réponses plus courtes et directes
+
+### 2. Simplification des Instructions
+- Demande d'un seul ajustement au lieu de plusieurs
+- Suppression des exemples détaillés
+- Élimination des répétitions d'informations
+
+### 3. Modifications du Message Système
+- Suppression des mentions de CLIP (non pertinent)
+- Focus sur la brièveté et la concision
+- Instructions plus directes et claires
+
+### 4. Nouvelles Contraintes Explicites
+- Utilisation de phrases courtes et directes
+- Interdiction des explications détaillées
+- Limitation à un seul ajustement
+- Interdiction des répétitions
+
+## Résultats Attendus
+- Descriptions plus concises
+- Informations essentielles préservées
+- Meilleure lisibilité
+- Plus facile à traiter par le modèle d'embedding
