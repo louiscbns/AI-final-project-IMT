@@ -41,6 +41,20 @@ Ce jeu de données est une version nettoyée et filtrée du dataset Nutrition5k 
 - Génération d'embeddings pour les ingrédients (texte) 
 - Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir du texte
 
+1 gros modèle ou 4 modèles (proteines, glucides, calories, fat) car ceux ci ne sont pas independants
+
+
+- Compléter le dataset avec les ingrédients manquants ?
+
+
+Baseline : 
+Modele de segmentation, estimation de la quantite des ingredients : avec surface. Tant de quantite de X represente : 
+
+
+
+
+
+
 - Génération d'embeddings pour les images (image)
 - Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir de l'image
 

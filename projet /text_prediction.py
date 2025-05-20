@@ -41,69 +41,6 @@ def load_metadata(file_path, num_samples=3):
             })
     return dishes_data
 
-def create_ingredient_description(ingredients):
-    """
-    Create a rich textual description for a complete dish with all its ingredients
-    using Mistral AI API
-    
-    Args:
-        ingredients (list): List of dish ingredients
-        
-    Returns:
-        str: Complete textual description of the dish
-    """
-    # Initialize Mistral client
-    api_key = os.getenv("MISTRAL_API_KEY")
-    if not api_key:
-        raise ValueError("Mistral API key is not defined in .env file")
-    
-    client = Mistral(api_key=api_key)
-    model = "mistral-large-latest"
-    
-    # Create prompt for Mistral
-    ingredients_text = "\n".join([
-        f"- {ing['name']} ({ing['grams']}g) : {ing['calories']:.1f} kcal, {ing['fat']:.1f}g fat, {ing['carb']:.1f}g carbs, {ing['protein']:.1f}g protein"
-        for ing in ingredients
-    ])
-    
-    prompt = f"""As a nutritionist, analyze this dish using these ingredients and their nutritional information:
-
-{ingredients_text}
-
-Balanced meal criteria:
-- Total calories: 500-800 kcal
-- Protein: 20-30g (25-30% of calories)
-- Carbs: 45-65g (45-55% of calories)
-- Fat: 15-25g (25-35% of calories)
-
-Generate an EXTREMELY short description that:
-1. Compares the nutritional values with these balance criteria
-2. Suggests ONE simple adjustment to improve balance
-3. Avoids unnecessary details and repetitions
-
-IMPORTANT: 
-- Your response must be VERY short (maximum 50 tokens)
-- Use short and direct sentences
-- Avoid detailed explanations
-- Mention only one adjustment at a time
-- Don't repeat the same information"""
-    
-    # Call Mistral API
-    chat_response = client.chat.complete(
-        model=model,
-        messages=[
-            {
-                "role": "system",
-                "content": "You are an expert nutritionist analyzing dishes. You must provide VERY short and direct nutritional descriptions. Avoid unnecessary details and repetitions. IMPORTANT: Your response must be extremely short (maximum 50 tokens)."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
-    
-    return chat_response.choices[0].message.content
 
 def generate_text_embeddings_transformer(texts):
     """
