@@ -38,8 +38,8 @@ Ce jeu de données est une version nettoyée et filtrée du dataset Nutrition5k 
     OK : Moyenne, écart-type, Coefficient de variation (CV), Écart interquartile (IQR), 1er quartile, 3ème quartile sous forme de boxplot.
     (Ratio protéines/lipides/glucides par rapport à la masse)
 
-- Génération d'embeddings pour les ingrédients (texte) 
-- Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir du texte
+    OK : Génération d'embeddings pour les ingrédients (texte) 
+    OK : Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir du texte
 
 1 gros modèle ou 4 modèles (proteines, glucides, calories, fat) car ceux ci ne sont pas independants
 

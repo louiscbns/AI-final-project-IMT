@@ -3,19 +3,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
-from split_train_test import load_and_prepare_data, split_data, save_splits
+import os
+from pathlib import Path
+
+# Gestion des imports pour fonctionner à la fois en exécution directe et en tant que module
+try:
+    from .split_train_test_data import load_and_prepare_data, split_data
+except ImportError:
+    import sys
+    sys.path.append(str(Path(__file__).parent.parent.parent))
+    from src.data_processing.split_train_test_data import load_and_prepare_data, split_data
 
 # Colonnes nutritionnelles à analyser
 colonnes_nutrition = ['total_calories', 'total_fat', 'total_carb', 'total_protein']
 
+# Chemin vers le fichier de données
+data_path = Path(__file__).parent.parent.parent / 'data' / 'food-nutrients' / 'metadata.jsonl'
+
 # Charger et préparer le dataset
-df = load_and_prepare_data('food-nutrients/metadata.jsonl')
+df = load_and_prepare_data(str(data_path))
 
 # Diviser les données
 X_train, X_test, y_train, y_test, df_clean = split_data(df)
-
-# Sauvegarder les ensembles
-save_splits(X_train, X_test, y_train, y_test)
 
 # Créer une figure pour toutes les visualisations
 plt.figure(figsize=(20, 15))
@@ -62,7 +71,8 @@ plt.title('Distribution des calories (Train vs Test, nettoyé)')
 plt.legend()
 
 comparaison_text = "Comparaison Train/Test:\n"
-for col in colonnes_nutrition:
+# Pour les macronutriments
+for col in ['total_fat', 'total_carb', 'total_protein']:
     ks_stat, ks_pval = stats.ks_2samp(X_train[col], X_test[col])
     mean_diff = abs(X_train[col].mean() - X_test[col].mean()) / X_train[col].mean() * 100
     std_diff = abs(X_train[col].std() - X_test[col].std()) / X_train[col].std() * 100
@@ -70,6 +80,16 @@ for col in colonnes_nutrition:
     comparaison_text += f"KS p-value: {ks_pval:.3f}\n"
     comparaison_text += f"Diff moyenne: {mean_diff:.1f}%\n"
     comparaison_text += f"Diff écart-type: {std_diff:.1f}%"
+
+# Pour les calories
+ks_stat, ks_pval = stats.ks_2samp(y_train, y_test)
+mean_diff = abs(y_train.mean() - y_test.mean()) / y_train.mean() * 100
+std_diff = abs(y_train.std() - y_test.std()) / y_train.std() * 100
+comparaison_text += f"\ntotal_calories:\n"
+comparaison_text += f"KS p-value: {ks_pval:.3f}\n"
+comparaison_text += f"Diff moyenne: {mean_diff:.1f}%\n"
+comparaison_text += f"Diff écart-type: {std_diff:.1f}%"
+
 plt.text(1.02, 0.5, comparaison_text, transform=plt.gca().transAxes, verticalalignment='center')
 
 # 5. Distribution des ratios nutritionnels
@@ -107,7 +127,8 @@ print(f"Test: {len(X_test)} échantillons ({len(X_test)/len(df_clean)*100:.1f}%)
 
 print("\n=== COMPARAISON DES DISTRIBUTIONS TRAIN/TEST ===")
 print("\nTest de Kolmogorov-Smirnov et écarts relatifs :")
-for col in colonnes_nutrition:
+# Pour les macronutriments
+for col in ['total_fat', 'total_carb', 'total_protein']:
     ks_stat, ks_pval = stats.ks_2samp(X_train[col], X_test[col])
     mean_diff = abs(X_train[col].mean() - X_test[col].mean()) / X_train[col].mean() * 100
     std_diff = abs(X_train[col].std() - X_test[col].std()) / X_train[col].std() * 100
@@ -115,6 +136,15 @@ for col in colonnes_nutrition:
     print(f"KS p-value: {ks_pval:.3f}")
     print(f"Différence moyenne: {mean_diff:.1f}%")
     print(f"Différence écart-type: {std_diff:.1f}%")
+
+# Pour les calories
+ks_stat, ks_pval = stats.ks_2samp(y_train, y_test)
+mean_diff = abs(y_train.mean() - y_test.mean()) / y_train.mean() * 100
+std_diff = abs(y_train.std() - y_test.std()) / y_train.std() * 100
+print(f"\ntotal_calories:")
+print(f"KS p-value: {ks_pval:.3f}")
+print(f"Différence moyenne: {mean_diff:.1f}%")
+print(f"Différence écart-type: {std_diff:.1f}%")
 
 print("\n=== STATISTIQUES DES RATIOS NUTRITIONNELS ===")
 print(df_clean[['ratio_proteines', 'ratio_lipides', 'ratio_glucides']].describe()) 
