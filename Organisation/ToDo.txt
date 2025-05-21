@@ -41,10 +41,9 @@ Ce jeu de données est une version nettoyée et filtrée du dataset Nutrition5k 
     OK : Génération d'embeddings pour les ingrédients (texte) 
     OK : Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir du texte
 
-1 gros modèle ou 4 modèles (proteines, glucides, calories, fat) car ceux ci ne sont pas independants
+- 1 gros modèle ou 4 modèles (proteines, glucides, calories, fat) car ceux ci ne sont pas independants
 
 
-- Compléter le dataset avec les ingrédients manquants ?
 
 
 Baseline : 
@@ -55,11 +54,17 @@ Modele de segmentation, estimation de la quantite des ingredients : avec surface
 
 
 
+Image : 
+- Segmentation, detection
 - Génération d'embeddings pour les images (image)
 - Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir de l'image
+- **Approche Image**: Utilisation d'OpenCLIP ou d'architectures CNN pour extraire des features des images
 
+
+Text & Image : 
 - Prédire les valeurs nutritionnelles (notamment les calories) d'un plat à partir du texte et de l'image combiné (multimodal)
 
+- **Approche Multimodale**: Combinaison des embeddings texte et image
 
 ### Modèles Implémentés
 
@@ -70,30 +75,26 @@ baseline simple, on utilise le meme split train/test et compare les resultats
 embeddings, calculer les distances entre ces embeddings ? distance cosinus.
 
 
-- **Approche Image**: Utilisation d'OpenCLIP ou d'architectures CNN pour extraire des features des images
-- **Approche Multimodale**: Combinaison des embeddings texte et image
 
+
+
+#2nd temps
 #### Pour la Tâche de Clustering/Classification
 - Techniques de réduction de dimensionnalité (t-SNE, UMAP)
 - Clustering hiérarchique pour identifier des groupes d'aliments similaires
 - Génération de descriptions textuelles à partir des profils nutritionnels
-
 ## Visualisations
 - Distribution des valeurs nutritionnelles dans le dataset
 - Visualisation des clusters de plats similaires
 - Représentation des profils nutritionnels en pourcentage de la composition totale (protéines, lipides, glucides)
 
+
+
+
 ## Applications Potentielles
 - Estimation automatique des calories et des nutriments dans une assiette
 - Recommandation nutritionnelle personnalisée
 - Aide à la composition de menus équilibrés
-
-## Organisation du Code
-- `data_preprocessing/`: Scripts de préparation et d'analyse exploratoire des données
-- `embedding_generation/`: Création des embeddings texte et image
-- `models/`: Implémentation des modèles de régression et classification
-- `visualization/`: Scripts de visualisation des résultats
-- `notebooks/`: Jupyter notebooks pour l'exploration et la démonstration
 
 
 

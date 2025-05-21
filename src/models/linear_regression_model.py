@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 import matplotlib.pyplot as plt
 import seaborn as sns
 import json
@@ -81,28 +81,48 @@ def train_and_evaluate_model(X_embeddings, y):
     y_test_denorm = denormalize_predictions(y_test)
     y_pred_denorm = denormalize_predictions(y_pred)
     
-    # Calculer les métriques pour chaque caractéristique
+    # Créer un DataFrame pour la matrice de corrélation
     feature_names = ['calories', 'proteines', 'glucides', 'lipides']
-    for i, feature_name in enumerate(feature_names):
-        mse = mean_squared_error(y_test_denorm[:, i], y_pred_denorm[:, i])
-        r2 = r2_score(y_test_denorm[:, i], y_pred_denorm[:, i])
-        
-        print(f"\n✅ {feature_name.upper()}:")
-        print(f"   - Erreur quadratique moyenne (MSE): {mse:.2f}")
-        print(f"   - Score R²: {r2:.2f}")
+    df_test = pd.DataFrame(y_test_denorm, columns=feature_names)
     
-    # Créer des graphiques de comparaison
-    plt.figure(figsize=(15, 10))
+    # Créer la figure pour les graphiques
+    plt.figure(figsize=(20, 15))
     
+    # Graphiques de comparaison avec métriques
     for i, feature_name in enumerate(feature_names):
-        plt.subplot(2, 2, i+1)
+        plt.subplot(2, 3, i+1)
         plt.scatter(y_test_denorm[:, i], y_pred_denorm[:, i], alpha=0.5)
+        
+        # Ligne idéale (y=x)
         plt.plot([y_test_denorm[:, i].min(), y_test_denorm[:, i].max()],
                 [y_test_denorm[:, i].min(), y_test_denorm[:, i].max()],
-                'r--', lw=2)
+                'r--', lw=2, label='Ligne idéale')
+        
+        # Courbe de régression réelle
+        z = np.polyfit(y_test_denorm[:, i], y_pred_denorm[:, i], 1)
+        p = np.poly1d(z)
+        x_range = np.linspace(y_test_denorm[:, i].min(), y_test_denorm[:, i].max(), 100)
+        plt.plot(x_range, p(x_range), 'b-', lw=2, label='Régression réelle')
+        
+        # Calculer les métriques
+        mse = mean_squared_error(y_test_denorm[:, i], y_pred_denorm[:, i])
+        mae = mean_absolute_error(y_test_denorm[:, i], y_pred_denorm[:, i])
+        r2 = r2_score(y_test_denorm[:, i], y_pred_denorm[:, i])
+        corr = np.corrcoef(y_test_denorm[:, i], y_pred_denorm[:, i])[0,1]
+        
+        # Ajouter les métriques au graphique
+        plt.title(f'Régression linéaire - {feature_name}\n'
+                 f'R² = {r2:.3f}, Corr = {corr:.3f}\n'
+                 f'MSE = {mse:.2f}, MAE = {mae:.2f}')
         plt.xlabel(f'Valeurs réelles ({feature_name})')
         plt.ylabel(f'Prédictions ({feature_name})')
-        plt.title(f'Régression linéaire - {feature_name}')
+        plt.legend()
+    
+    # Matrice de corrélation
+    plt.subplot(2, 3, 5)
+    correlation_matrix = df_test.corr()
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+    plt.title('Matrice de corrélation des nutriments')
     
     plt.tight_layout()
     plt.show()

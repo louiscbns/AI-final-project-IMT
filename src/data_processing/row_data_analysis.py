@@ -5,20 +5,53 @@ import seaborn as sns
 from scipy import stats
 import os
 from pathlib import Path
+import json
+from sklearn.model_selection import train_test_split
 
-# Gestion des imports pour fonctionner à la fois en exécution directe et en tant que module
-try:
-    from .split_train_test_data import load_and_prepare_data, split_data
-except ImportError:
-    import sys
-    sys.path.append(str(Path(__file__).parent.parent.parent))
-    from src.data_processing.split_train_test_data import load_and_prepare_data, split_data
+def load_and_prepare_data(file_path):
+    """
+    Charge et prépare les données depuis un fichier JSON.
+    """
+    # Charger les données
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    
+    # Convertir en DataFrame
+    df = pd.DataFrame(data)
+    
+    # Calculer les ratios nutritionnels
+    df['ratio_proteines'] = df['total_protein'] / df['total_calories']
+    df['ratio_lipides'] = df['total_fat'] / df['total_calories']
+    df['ratio_glucides'] = df['total_carb'] / df['total_calories']
+    
+    return df
+
+def split_data(df, test_size=0.2, random_state=42):
+    """
+    Divise les données en ensembles d'entraînement et de test.
+    """
+    # Sélectionner les colonnes pour X et y
+    X_columns = ['total_fat', 'total_carb', 'total_protein']
+    y_column = 'total_calories'
+    
+    # Nettoyer les données (supprimer les lignes avec des valeurs manquantes)
+    df_clean = df.dropna(subset=X_columns + [y_column])
+    
+    # Diviser les données
+    X = df_clean[X_columns]
+    y = df_clean[y_column]
+    
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, random_state=random_state
+    )
+    
+    return X_train, X_test, y_train, y_test, df_clean
 
 # Colonnes nutritionnelles à analyser
 colonnes_nutrition = ['total_calories', 'total_fat', 'total_carb', 'total_protein']
 
 # Chemin vers le fichier de données
-data_path = Path(__file__).parent.parent.parent / 'data' / 'food-nutrients' / 'metadata.jsonl'
+data_path = Path(__file__).parent.parent.parent / 'data' / 'food-nutrients' / 'metadata_modified.json'
 
 # Charger et préparer le dataset
 df = load_and_prepare_data(str(data_path))
