@@ -1,3 +1,3 @@
-[submodule "food-nutrients"]
-	path = food-nutrients
+[submodule "data/food-nutrients"]
+	path = data/food-nutrients
 	url = https://huggingface.co/datasets/mmathys/food-nutrients
